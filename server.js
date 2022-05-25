@@ -1,41 +1,58 @@
-const express =  require('express');
+var express = require('express');
 var cors = require('cors');
-const res = require('express/lib/response')
+
 var app = express();
 
-
-var corsOption = {
-    origin: 'http://localhost:8081'
+//Cors stands for Cross-Origin Resource Sharing. It allows the relaxation of security applied to api.
+var corOptions = {
+    origin: "http://localhost:8081"
 }
-console.log("is our server running");
-app.use(cors(corsOption))
+// console.log("http://localhost:8081");
+// console.log('The project is running');
+
+app.use(cors(corOptions));
+//app object is instantiated on creation of express server
+//use is a method to configure the middleware used by routes
+
+//parse requests of content type application/json
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+
+//
+app.use(express.urlencoded({extended: true}));
+
 
 
 //simple route
-
-app.get('/', (req, res)=>{
-    res.json({
-        message : 'Welcome to the World of Node JS'
-    });
+app.get('/', (req, res) => {
+    res.json({message: 'Welcome to the world of Node JS!'})
 });
 
-require("./app/routes/tutorials.routes.js");
+// another route
+// app.get('/alt-route', (req, res) => {
+//     res.json({message: 'An alternate route\'s response.'})
+// });
+
+
+
+
+require("./app/routes/tutorials.routes");
+
+//set port, listens for request
 const PORT = process.env.PORT || 8081;
-app.listen(PORT, ()=>{
-    console.log(`server running on port ${PORT}`);
-    console.log('http://localhost:8081');
+
+app.listen(PORT,()=>{
+    console.log(`Server is running on port: ${PORT}`);
+    console.log(`http://localhost:${PORT}`);
 });
 
-//  Create DataBass NodeJSAPI
-//  Create MySQL table tutorials
-//  Create Table if not exists tutorials (
-//  id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-//  tittle varchar(225) NOT NULL
-//  description varchar(2225),
-//  published BOOLESN DEFAULT false,    
-//) 
+require("./app/routes/tutorials.routes.js")(app);
 
-//Configure & connect our application to MySQL database
+//Create MySQL Database with WAMPServer
+/*
+CREATE TABLE IF NOT EXISTS nodejsapi (
+    id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    title varchar(225) NOT NULL,
+    description varchar(255),
+    published BOOLEAN DEFAULT false);
+*/
 require('./app/models/db');
